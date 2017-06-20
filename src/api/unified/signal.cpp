@@ -23,6 +23,12 @@ af_err af_approx2(af_array *out, const af_array in, const af_array pos0, const a
     return CALL(out, in, pos0, pos1, method, offGrid);
 }
 
+af_err af_approx3(af_array *out, const af_array in, const af_array pos0, const af_array pos1, const af_array pos2, const af_interp_type method, const float offGrid)
+{
+    CHECK_ARRAYS(in, pos0, pos1, pos2);
+    return CALL(out, in, pos0, pos1, pos2, method, offGrid);
+}
+
 af_err af_set_fft_plan_cache_size(size_t cache_size)
 {
     return CALL(cache_size);

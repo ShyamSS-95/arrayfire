@@ -27,4 +27,12 @@ namespace af
         AF_THROW(af_approx2(&out, in.get(), pos0.get(), pos1.get(), method, offGrid));
         return array(out);
     }
+
+    array approx3(const array& in, const array &pos0, const array &pos1,
+                  const &pos2, const interpType method, const float offGrid)
+    {
+        af_array out = 0;
+        AF_THROW(af_approx3(&out, in.get(), pos0.get(), pos1.get(), pos2.get(), method, offGrid));
+        return array(out);
+    }
 }

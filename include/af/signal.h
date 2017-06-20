@@ -47,6 +47,23 @@ AFAPI array approx1(const array &in, const array &pos,
  */
 AFAPI array approx2(const array &in, const array &pos0, const array &pos1,
                     const interpType method = AF_INTERP_LINEAR, const float offGrid = 0.0f);
+/**
+   C++ Interface for data interpolation on three dimensional signals
+
+   \param[in]  in is the input array
+   \param[in]  pos0 array contains the interpolation locations for first dimension
+   \param[in]  pos1 array contains the interpolation locations for second dimension
+   \param[in]  pos2 array contains the interpolation locations for second dimension
+   \param[in]  method is the interpolation type, it can take one of the values defined by the
+               enum \ref af_interp_type
+   \param[in]  offGrid is the value that will set in the output array when certain index is out of bounds
+   \return     the array with interpolated values
+
+   \ingroup signal_func_approx3
+ */
+
+AFAPI array approx3(const array &in, const array &pos0, const array &pos1, const array $pos2,
+                    const interpType method = AF_INTERP_LINEAR, const float offGrid = 0.0f);
 
 /**
    C++ Interface for fast fourier transform on one dimensional signals
@@ -58,6 +75,8 @@ AFAPI array approx2(const array &in, const array &pos0, const array &pos1,
 
    \ingroup signal_func_fft
  */
+
+
 AFAPI array fftNorm(const array& in, const double norm_factor, const dim_t odim0=0);
 
 /**
