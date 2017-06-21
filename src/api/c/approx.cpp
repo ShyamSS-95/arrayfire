@@ -160,6 +160,8 @@ af_err af_approx3(af_array *out, const af_array in, const af_array pos0, const a
         ARG_ASSERT(1, i_info.isSingle() == p_info.isSingle());  // Must have same precision
         ARG_ASSERT(1, i_info.isDouble() == p_info.isDouble());  // Must have same precision
        
+        // Don't understand what's going on here clearly:
+        // What's the purpose of the index here
         DIM_ASSERT(2, pdims == qdims && qdims == rdims);        // POS0, POS1 and POS2 must have same dims
 
         if(idims.ndims() == 0 || pdims.ndims() ==  0 || qdims.ndims() == 0|| rdims.ndims() == 0) {

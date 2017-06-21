@@ -121,5 +121,67 @@ void approx2(Array<InT> output, const Array<InT> input,
         }
     }
 }
+
+template<typename InT, typename LocT, int order>
+void approx3(Array<InT> output, const Array<InT> input,
+             const Array<LocT> xposition, const Array<LocT> yposition, const Array<LocT> zposition,
+             float const offGrid, af_interp_type method)
+{
+    InT * out = output.get();
+    const LocT *xpos = xposition.get();
+    const LocT *ypos = yposition.get();
+    const LocT *zpos = zposition.get();
+
+    af::dim4 const odims     = output.dims();
+    af::dim4 const idims     = input.dims();
+    af::dim4 const xdims     = xposition.dims();
+
+    af::dim4 const ostrides  = output.strides();
+    af::dim4 const istrides  = input.strides();
+    af::dim4 const xstrides  = xposition.strides();
+    af::dim4 const ystrides  = yposition.strides();
+    af::dim4 const zstrides  = zposition.strides();
+
+    Interp2<InT, LocT, order> interp;
+    bool batch = !(xdims[3] == 1);
+
+    for(dim_t idw = 0; idw < odims[3]; idw++) {
+        for(dim_t idz = 0; idz < odims[2]; idz++) {
+
+            dim_t xoffzw = idw * xstrides[3] + idz * xstrides[2];
+            dim_t yoffzw = idw * ystrides[3] + idz * ystrides[2];
+            dim_t zoffzw = idw * zstrides[3] + idz * zstrides[2];
+            dim_t ooffzw = idw * ostrides[3] + idz * ostrides[2];
+            dim_t ioffzw = idw * istrides[3] + idz * istrides[2];
+
+            for(dim_t idy = 0; idy < odims[1]; idy++) {
+                dim_t xoff = xoffzw * batch + idy * xstrides[1];
+                dim_t yoff = yoffzw * batch + idy * ystrides[1];
+                dim_t zoff = zoffzw * batch + idy * zstrides[1];
+                dim_t ooff = ooffzw         + idy * ostrides[1];
+
+                for(dim_t idx = 0; idx < odims[0]; idx++) {
+
+                    const LocT x = xpos[xoff + idx];
+                    const LocT y = ypos[yoff + idx];
+                    const LocT z = zpos[zoff + idx];
+
+                    // FIXME: Only cubic interpolation is doing clamping
+                    // We need to make it consistent across all methods
+                    // Not changing the behavior because tests will fail
+                    bool clamp = order == 3;
+
+                    if (x < 0 || idims[0] < x + 1 ||
+                        y < 0 || idims[1] < y + 1 ||
+                        z < 0 || idims[2] < y + 1) {
+                        out[ooff + idx] = scalar<InT>(offGrid);
+                    } else {
+                        interp(output, ooff + idx, input, ioffzw, x, y, z, method, 1, clamp);
+                    }
+                }
+            }
+        }
+    }
+}
 }
 }
